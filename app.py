@@ -84,7 +84,7 @@ def run_model():
     # Step 1: Define your Spotify Developer credentials
     CLIENT_ID = 'ddd1727c389c4438a214f8b617e63f3d'
     CLIENT_SECRET = '18cb85f3f93b467a97be3f935b22e492'
-    REDIRECT_URI = 'http://127.0.0.1:8888/callback'
+    REDIRECT_URI = 'http://https://music-classifier-7cee1.web.app/callback'
 
     # Step 2: Define the permissions you need (called scopes)
     # You can find full list of scopes here: https://developer.spotify.com/documentation/web-api/concepts/scopes
