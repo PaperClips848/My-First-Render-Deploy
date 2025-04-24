@@ -82,22 +82,13 @@ def run_model():
 
     # %%
     # Step 1: Define your Spotify Developer credentials
-    CLIENT_ID = 'ddd1727c389c4438a214f8b617e63f3d'
-    CLIENT_SECRET = '18cb85f3f93b467a97be3f935b22e492'
-    REDIRECT_URI = 'http://https://music-classifier-7cee1.web.app/callback'
+    data = request.get_json()
+    token = data.get("access_token")
 
-    # Step 2: Define the permissions you need (called scopes)
-    # You can find full list of scopes here: https://developer.spotify.com/documentation/web-api/concepts/scopes
-    SCOPE = 'user-library-read user-top-read playlist-modify-public'
+    if not token:
+        return jsonify({"error": "Access token required"}), 400
 
-    # Step 3: Create a SpotifyOAuth object to handle the OAuth flow
-    sp_oauth = SpotifyOAuth(client_id=CLIENT_ID,
-                            client_secret=CLIENT_SECRET,
-                            redirect_uri=REDIRECT_URI,
-                            scope=SCOPE)
-
-    # Step 4: Create a Spotipy client with authenticated user token
-    sp = spotipy.Spotify(auth_manager=sp_oauth)
+    sp = Spotify(auth=token)
 
     # Step 5: Now you can access user data! Let's get the current user's profile
     user_profile = sp.current_user()
