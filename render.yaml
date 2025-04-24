@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: music-recommender
+    env: python
+    buildCommand: ""
+    startCommand: "python app.py"
+    envVars:
+      - key: SPOTIPY_CLIENT_ID
+        value: ddd1727c389c4438a214f8b617e63f3d
+      - key: SPOTIPY_CLIENT_SECRET
+        value: 18cb85f3f93b467a97be3f935b22e492
+      - key: SPOTIPY_REDIRECT_URI
+        value: http://127.0.0.1:8888/callback
