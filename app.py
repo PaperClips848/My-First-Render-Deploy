@@ -14,9 +14,9 @@ import base64
 app = Flask(__name__)
 CORS(app)
 
-CLIENT_ID = os.getenv("SPOTIPY_CLIENT_ID")
-CLIENT_SECRET = os.getenv("SPOTIPY_CLIENT_SECRET")
-REDIRECT_URI = os.getenv("SPOTIPY_REDIRECT_URI") or "https://your-frontend.web.app/callback"
+CLIENT_ID = os.getenv("ddd1727c389c4438a214f8b617e63f3d")
+CLIENT_SECRET = os.getenv("18cb85f3f93b467a97be3f935b22e492")
+REDIRECT_URI = os.getenv("SPOTIPY_REDIRECT_URI") or "https://music-classifier-7cee1.web.app/callback.html"
 
 @app.route("/authorize", methods=["POST"])
 def authorize():
