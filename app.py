@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from spotipy import Spotify
+import requests
+import os
 import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
@@ -13,36 +14,54 @@ import base64
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/run-model", methods=["POST"])
-def run_model():
+CLIENT_ID = os.getenv("SPOTIPY_CLIENT_ID")
+CLIENT_SECRET = os.getenv("SPOTIPY_CLIENT_SECRET")
+REDIRECT_URI = os.getenv("SPOTIPY_REDIRECT_URI") or "https://your-frontend.web.app/callback"
+
+@app.route("/authorize", methods=["POST"])
+def authorize():
     data = request.get_json()
-    token = data.get("access_token")
+    code = data.get("code")
+    code_verifier = data.get("code_verifier")
 
-    if not token:
-        return jsonify({"error": "Access token required"}), 400
+    if not code or not code_verifier:
+        return jsonify({"error": "Missing code or verifier"}), 400
 
-    sp = Spotify(auth=token)
-    user_profile = sp.current_user()
-    print("Logged in as:", user_profile['display_name'])
+    token_url = "https://accounts.spotify.com/api/token"
+    payload = {
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": REDIRECT_URI,
+        "client_id": CLIENT_ID,
+        "code_verifier": code_verifier
+    }
 
-    # Get liked song IDs
+    response = requests.post(token_url, data=payload)
+    token_info = response.json()
+    access_token = token_info.get("access_token")
+
+    if not access_token:
+        return jsonify({"error": "Failed to exchange token", "details": token_info}), 400
+
+    # Continue from here: same as /run-model logic
+    headers = {"Authorization": f"Bearer {access_token}"}
+    user_profile = requests.get("https://api.spotify.com/v1/me", headers=headers).json()
+    print("Logged in as:", user_profile.get("display_name", "Unknown"))
+
     liked_song_ids = []
-    results = sp.current_user_saved_tracks()
-    tracks = results['items']
-    while results['next']:
-        results = sp.next(results)
-        tracks.extend(results['items'])
-    for track in tracks:
-        liked_song_ids.append(track['track']['id'])
+    tracks_url = "https://api.spotify.com/v1/me/tracks?limit=50"
+    while tracks_url:
+        res = requests.get(tracks_url, headers=headers).json()
+        for item in res.get("items", []):
+            liked_song_ids.append(item['track']['id'])
+        tracks_url = res.get("next")
 
-    # Load dataset
     df = pd.read_csv("data/data.csv")
     features = ['acousticness', 'danceability', 'energy', 'instrumentalness',
                 'liveness', 'loudness', 'speechiness', 'tempo', 'valence',
                 'duration_ms', 'explicit', 'key', 'mode']
     df['liked'] = df['id'].isin(liked_song_ids).astype(int)
 
-    # KNN Scoring
     scaler = MinMaxScaler()
     X = scaler.fit_transform(df[features])
     liked_X = X[df['liked'] == 1]
@@ -55,7 +74,6 @@ def run_model():
     user_liked_threshold = 0.85
     df['liked_predicted'] = (df['user_score'] >= user_liked_threshold).astype(int)
 
-    # Create bar chart of liked songs' average features
     liked_songs_df = df[df['id'].isin(liked_song_ids)][features]
     df_normalized = pd.DataFrame(scaler.fit_transform(liked_songs_df), columns=features)
     mean_features = df_normalized.mean()
