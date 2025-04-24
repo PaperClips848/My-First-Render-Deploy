@@ -36,3 +36,4 @@ umap-learn
 urllib3
 Werkzeug
 pytz
+plotly
