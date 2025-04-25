@@ -16,7 +16,7 @@ CORS(app)
 
 CLIENT_ID = os.getenv("ddd1727c389c4438a214f8b617e63f3d")
 CLIENT_SECRET = os.getenv("18cb85f3f93b467a97be3f935b22e492")
-REDIRECT_URI = os.getenv("SPOTIPY_REDIRECT_URI") or "https://music-classifier-7cee1.web.app/callback.html"
+REDIRECT_URI = os.getenv("SPOTIPY_REDIRECT_URI") or "https://music-classifier-7cee1.web.app/callback"
 
 @app.route("/authorize", methods=["POST"])
 def authorize():
