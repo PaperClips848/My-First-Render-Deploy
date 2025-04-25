@@ -38,6 +38,8 @@ def authorize():
 
     response = requests.post(token_url, data=payload)
     token_info = response.json()
+    print("🔍 Spotify token response:", token_info)
+
     access_token = token_info.get("access_token")
 
     if not access_token:
