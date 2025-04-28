@@ -79,8 +79,8 @@ def authorize():
 
 
     # %%
-    data = pd.read_csv('backend/data/data.csv')
-    data_w_genre  = pd.read_csv('backend/data/data_w_genre.csv')
+    data = pd.read_csv('data/data.csv')
+    data_w_genre  = pd.read_csv('data/data_w_genre.csv')
     
     # %%
     liked_songs_df = data[data['id'].isin(liked_song_ids)]
