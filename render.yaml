@@ -10,4 +10,4 @@ services:
       - key: SPOTIPY_CLIENT_SECRET
         value: 18cb85f3f93b467a97be3f935b22e492
       - key: SPOTIPY_REDIRECT_URI
-        value: http://127.0.0.1:8888/callback
+        value: https://music-classifier-7cee1.web.app/callback
