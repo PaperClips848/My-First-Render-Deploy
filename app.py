@@ -11,6 +11,10 @@ from sklearn.neighbors import NearestNeighbors
 import io
 import base64
 
+# %%
+# importing spotipy to get user and song data
+import spotipy
+
 app = Flask(__name__)
 CORS(app)
 
