@@ -38,7 +38,7 @@ def authorize():
 
     response = requests.post(token_url, data=payload)
     token_info = response.json()
-    print("🔍 Spotify token response:", token_info)
+    print("🔍 Spotify token response:", token_info, flush=True)
 
     access_token = token_info.get("access_token")
 
@@ -48,7 +48,7 @@ def authorize():
     # Continue from here: same as /run-model logic
     headers = {"Authorization": f"Bearer {access_token}"}
     user_profile = requests.get("https://api.spotify.com/v1/me", headers=headers).json()
-    print("Logged in as:", user_profile.get("display_name", "Unknown"))
+    print("Logged in as:", user_profile.get("display_name", "Unknown"), flush=True)
 
     liked_song_ids = []
     tracks_url = "https://api.spotify.com/v1/me/tracks?limit=50"
