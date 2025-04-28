@@ -31,24 +31,20 @@ def authorize():
     payload = {
         "grant_type": "authorization_code",
         "code": code,
-        "redirect_uri": REDIRECT_URI,
-        "client_id": CLIENT_ID,
+        "redirect_uri": 'https://music-classifier-7cee1.web.app/callback.html',
+        "client_id": 'ddd1727c389c4438a214f8b617e63f3d',
         "code_verifier": code_verifier
     }
 
-    response = requests.post(token_url, data=payload)
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+
+    # 🚨 Make sure you send headers manually without Authorization
+    response = requests.post(token_url, data=payload, headers=headers)
     token_info = response.json()
+
     print("🔍 Spotify token response:", token_info, flush=True)
-
-    access_token = token_info.get("access_token")
-
-    if not access_token:
-        return jsonify({"error": "Failed to exchange token", "details": token_info}), 400
-
-    # Continue from here: same as /run-model logic
-    headers = {"Authorization": f"Bearer {access_token}"}
-    user_profile = requests.get("https://api.spotify.com/v1/me", headers=headers).json()
-    print("Logged in as:", user_profile.get("display_name", "Unknown"), flush=True)
 
     liked_song_ids = []
     tracks_url = "https://api.spotify.com/v1/me/tracks?limit=50"
